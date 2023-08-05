@@ -1,6 +1,7 @@
 package com.example.ttransfer;
 
 // https://www.geeksforgeeks.org/how-to-open-camera-through-intent-and-display-captured-image-in-android/
+// https://www.tutorialspoint.com/how-to-convert-image-into-base64-string-in-androidhttps://www.tutorialspoint.com/how-to-convert-image-into-base64-string-in-android
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -16,14 +17,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     Button button_save;
     ImageView imageView;
     Bitmap photo;
+    String string_base64;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +128,23 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == pic_id) {
             // BitMap is data structure of image file which store the image in memory
             photo = (Bitmap) data.getExtras().get("data");
+            string_base64 = bitmapToString(photo);
+            send();
             // Set the image in imageview for display
             imageView.setImageBitmap(photo);
             button_save.setVisibility(imageView.VISIBLE);
         }
+    }
+
+    private String bitmapToString(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    public void send() {
+        Sender sender = new Sender();
+        sender.execute(string_base64);
     }
 }

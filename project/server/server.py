@@ -36,4 +36,3 @@ if __name__ == "__main__":
 
     base64_server = Server(HOST, PORT)
     received_base64_data = base64_server.receive_base64_data()
-    print("Received Base64 Data:", received_base64_data)

@@ -2,6 +2,8 @@ package com.example.ttransfer;
 
 // https://www.geeksforgeeks.org/how-to-open-camera-through-intent-and-display-captured-image-in-android/
 // https://www.tutorialspoint.com/how-to-convert-image-into-base64-string-in-androidhttps://www.tutorialspoint.com/how-to-convert-image-into-base64-string-in-android
+// http://androidapplicationdeveloper.weebly.com/android-tutorial/how-to-convert-bitmap-to-string-and-string-to-bitmap
+// https://stackoverflow.com/questions/9224056/android-bitmap-to-base64-string
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -19,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,11 +33,11 @@ import java.io.OutputStream;
 public class MainActivity extends AppCompatActivity {
     private static final int pic_id = 123;
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 101;
+    private static final String HOST = "192.168.43.236";
+    private static final String PORT = "7800";
     Button button_start;
     Button button_save;
     ImageView imageView;
-    Bitmap photo;
-    String string_base64;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,13 +127,14 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Match the request 'pic id with requestCode
+        Bitmap photo;
+        String bitmap_to_string;
         if (requestCode == pic_id) {
-            // BitMap is data structure of image file which store the image in memory
             photo = (Bitmap) data.getExtras().get("data");
-            string_base64 = bitmapToString(photo);
-            send();
-            // Set the image in imageview for display
+            bitmap_to_string = bitmapToString(photo);
+            //Log.i("BitmapString",bitmap_to_string);
+            send(bitmap_to_string);
+            //TODO: receive Base64 String and show it in ImageView
             imageView.setImageBitmap(photo);
             button_save.setVisibility(imageView.VISIBLE);
         }
@@ -138,13 +142,13 @@ public class MainActivity extends AppCompatActivity {
 
     private String bitmapToString(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 90, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
 
-    public void send() {
+    public void send(String str) {
         Sender sender = new Sender();
-        sender.execute(string_base64);
+        sender.execute(str, HOST, PORT);
     }
 }

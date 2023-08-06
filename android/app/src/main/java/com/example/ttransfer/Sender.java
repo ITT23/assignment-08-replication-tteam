@@ -18,8 +18,10 @@ public class Sender extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... voids) {
         String base64 = voids[0];
+        String host = voids[1];
+        int port = Integer.parseInt(voids[2]);
         try {
-            s = new Socket("192.168.172.9", 7800);
+            s = new Socket(host, port);
             pw = new PrintWriter(s.getOutputStream());
             pw.write(base64);
             pw.flush();

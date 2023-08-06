@@ -1,72 +1,34 @@
-#!/usr/bin/env python
-#https://stackoverflow.com/questions/42458475/sending-image-over-sockets-only-in-python-image-can-not-be-open
+# https://stackoverflow.com/questions/42458475/sending-image-over-sockets-only-in-python-image-can-not-be-open
 
 import socket
-import select
 
-imgcounter = 1
-basename = "image%s.png"
+def receive_base64_data():
+    HOST = '192.168.43.236'
+    PORT = 7800
 
-HOST = '127.0.0.1'
-PORT = 6666
+    buffer_size = 1024
 
-connected_clients_sockets = []
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))
+    server_socket.listen(1)
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print("Waiting for connection...")
+    conn, addr = server_socket.accept()
+    print("Connected to:", addr)
 
-server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server_socket.bind((HOST, PORT))
-server_socket.listen(10)
+    base64_data = b''
 
-connected_clients_sockets.append(server_socket)
+    while True:
+        data = conn.recv(buffer_size)
+        if not data:
+            break
+        base64_data += data
 
-while True:
+    conn.close()
+    server_socket.close()
 
-    read_sockets, write_sockets, error_sockets = select.select(connected_clients_sockets, [], [])
+    return base64_data
 
-    for sock in read_sockets:
-
-        if sock == server_socket:
-
-            sockfd, client_address = server_socket.accept()
-            connected_clients_sockets.append(sockfd)
-
-        else:
-            try:
-
-                data = sock.recv(4096)
-                txt = data.decode()
-
-                if data:
-
-                    if data.startswith(b'SIZE'):
-                        tmp = txt.split()
-                        size = int(tmp[1])
-
-                        print('got size')
-
-                        sock.sendall("GOT SIZE".encode())
-
-                    elif data.startswith(b'BYE'):
-                        sock.shutdown(socket.SHUT_RDWR)
-
-                    else:
-
-                        with open(basename % imgcounter, 'wb') as myfile:
-                            myfile.write(data)
-
-                            data = sock.recv(40960000)
-                            if not data:
-                                myfile.close()
-                                break
-                            myfile.write(data)
-                            myfile.close()
-
-                            sock.sendall("GOT IMAGE".encode())
-                            sock.shutdown(socket.SHUT_RDWR)
-            except:
-                sock.close()
-                connected_clients_sockets.remove(sock)
-                continue
-        imgcounter += 1
-server_socket.close()
+if __name__ == "__main__":
+    received_base64_data = receive_base64_data()
+    print("Received Base64 Data:", received_base64_data)

@@ -1,7 +1,7 @@
 # https://docs.opencv.org/3.4/d4/dc6/tutorial_py_template_matching.html
 # https://stackoverflow.com/questions/4383571/importing-files-from-different-folder
 
-from server.server import Server
+from receiver.receiver import Receiver
 from screenshot import TakeScreenshot
 import base64
 
@@ -9,7 +9,7 @@ HOST = '192.168.43.236'  # Replace with the desired host
 PORT = 7800  # Replace with the desired port
 
 def start_server():
-    base64_server = Server(HOST, PORT)
+    base64_server = Receiver(HOST, PORT)
     received_base64_data = base64_server.receive_base64_data()
     # print("Received Base64 Data:", received_base64_data)
     return received_base64_data

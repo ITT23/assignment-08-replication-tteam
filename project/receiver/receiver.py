@@ -2,7 +2,7 @@
 
 import socket
 
-class Server:
+class Receiver:
     def __init__(self, host, port, buffer_size=1024):
         self.host = host
         self.port = port
@@ -34,5 +34,5 @@ if __name__ == "__main__":
     HOST = '192.168.43.236'
     PORT = 7800
 
-    base64_server = Server(HOST, PORT)
+    base64_server = Receiver(HOST, PORT)
     received_base64_data = base64_server.receive_base64_data()

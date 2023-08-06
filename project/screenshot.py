@@ -1,3 +1,5 @@
+# https://nitratine.net/blog/post/how-to-take-a-screenshot-in-python-using-mss/
+
 import base64
 import io
 from PIL import ImageGrab

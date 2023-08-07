@@ -28,22 +28,32 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Base64DataCallback{
     private static final int pic_id = 123;
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 101;
     private static final String HOST = "192.168.43.236";
     private static final String PORT = "7800";
+    // private static final int PORT = 7800;
+    Socket socket;
     Button button_start;
     Button button_save;
+    private Sender sender;
+    private Receiver receiver;
+    String received_base64;
     ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        sender = new Sender();
+        //receiver = new Receiver(this);
         imageView = (ImageView) findViewById(R.id.imageView_camera);
         button_start = (Button) findViewById(R.id.button_start);
         button_start.setOnClickListener(new View.OnClickListener() {
@@ -133,8 +143,10 @@ public class MainActivity extends AppCompatActivity {
             photo = (Bitmap) data.getExtras().get("data");
             bitmap_to_string = bitmapToString(photo);
             //Log.i("BitmapString",bitmap_to_string);
-            send(bitmap_to_string);
+            sender.execute(bitmap_to_string, HOST, PORT);
             //TODO: receive Base64 String and show it in ImageView
+            //receiver.execute(HOST, PORT);
+            new Receiver().execute(HOST, PORT);
             imageView.setImageBitmap(photo);
             button_save.setVisibility(imageView.VISIBLE);
         }
@@ -147,8 +159,8 @@ public class MainActivity extends AppCompatActivity {
         return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
 
-    public void send(String str) {
-        Sender sender = new Sender();
-        sender.execute(str, HOST, PORT);
+    @Override
+    public void onDataReceived(String base64) {
+        Log.d("MainActivity", "Received base64 data: " + base64);
     }
 }

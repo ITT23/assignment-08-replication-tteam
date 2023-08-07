@@ -4,6 +4,7 @@ package com.example.ttransfer;
 // https://www.tutorialspoint.com/how-to-convert-image-into-base64-string-in-androidhttps://www.tutorialspoint.com/how-to-convert-image-into-base64-string-in-android
 // http://androidapplicationdeveloper.weebly.com/android-tutorial/how-to-convert-bitmap-to-string-and-string-to-bitmap
 // https://stackoverflow.com/questions/9224056/android-bitmap-to-base64-string
+// https://square.github.io/picasso/
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -19,41 +20,40 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
+import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
-public class MainActivity extends AppCompatActivity implements Base64DataCallback{
+import android.os.Handler;
+
+public class MainActivity extends AppCompatActivity{
     private static final int pic_id = 123;
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 101;
     private static final String HOST = "192.168.43.236";
     private static final String PORT = "7800";
     // private static final int PORT = 7800;
-    Socket socket;
+    private static final int HTTP_PORT = 8857;
     Button button_start;
     Button button_save;
     private Sender sender;
-    private Receiver receiver;
-    String received_base64;
     ImageView imageView;
+    private Handler handler = new Handler(Looper.getMainLooper());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sender = new Sender();
-        //receiver = new Receiver(this);
+        // receiver = new Receiver(this);
         imageView = (ImageView) findViewById(R.id.imageView_camera);
         button_start = (Button) findViewById(R.id.button_start);
         button_start.setOnClickListener(new View.OnClickListener() {
@@ -144,11 +144,15 @@ public class MainActivity extends AppCompatActivity implements Base64DataCallbac
             bitmap_to_string = bitmapToString(photo);
             //Log.i("BitmapString",bitmap_to_string);
             sender.execute(bitmap_to_string, HOST, PORT);
-            //TODO: receive Base64 String and show it in ImageView
-            //receiver.execute(HOST, PORT);
-            new Receiver().execute(HOST, PORT);
-            imageView.setImageBitmap(photo);
-            button_save.setVisibility(imageView.VISIBLE);
+            //TODO: download screenshot and show it in ImageView
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getImageFromHTTP();
+                    //imageView.setImageBitmap(photo);
+                    button_save.setVisibility(imageView.VISIBLE);
+                }
+            }, 1500);
         }
     }
 
@@ -159,8 +163,18 @@ public class MainActivity extends AppCompatActivity implements Base64DataCallbac
         return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
 
-    @Override
-    public void onDataReceived(String base64) {
-        Log.d("MainActivity", "Received base64 data: " + base64);
+    private void getImageFromHTTP() {
+        String http = "http://"+ HOST + ":" + HTTP_PORT + "/screenshot/screenshot.png";
+        Picasso.get().load(http).into(imageView);
+    /*    Glide.with(this)
+                .asBitmap()
+                .load(http)
+                .into(imageView);
+*/
+        /* open http test
+        Uri uri = Uri.parse(http);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+*/
     }
 }

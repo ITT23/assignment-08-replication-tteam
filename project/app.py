@@ -13,6 +13,7 @@ from server.server import Server
 
 HOST = '192.168.43.236'  # Replace with the desired host
 PORT = 7800  # Replace with the desired port
+HTTP_PORT = 8857
 base64_server = Server(HOST, PORT)
 
 def start_server():
@@ -53,7 +54,7 @@ def take_screenshot():
 
 def start_http_server():
     try:
-        cmd_command = f"start python -m http.server {PORT+1057}"
+        cmd_command = f"start python -m http.server {HTTP_PORT}"
         # for Linux: cmd_command = f"nohup python -m http.server {PORT}"
         os.system(cmd_command)
     except OSError as error:

@@ -2,16 +2,18 @@
 # https://stackoverflow.com/questions/4383571/importing-files-from-different-folder
 
 from receiver.receiver import Receiver
+# from sender.sender import send_message
 from screenshot import TakeScreenshot
 import base64
 
 HOST = '192.168.43.236'  # Replace with the desired host
 PORT = 7800  # Replace with the desired port
+base64_server = Receiver(HOST, PORT)
 
 def start_server():
-    base64_server = Receiver(HOST, PORT)
+    #base64_server = Receiver(HOST, PORT)
     received_base64_data = base64_server.receive_base64_data()
-    # print("Received Base64 Data:", received_base64_data)
+    #print("Received Base64 Data:", received_base64_data)
     return received_base64_data
 
 def base64_validation(base64_data):
@@ -34,4 +36,6 @@ def take_screenshot():
 if __name__ == "__main__":
     received_base64_data = start_server()
     if base64_validation(received_base64_data):
-        take_screenshot()
+        base64_server.send_data()
+        # take_screenshot()
+        # send_message("Hello from Python server!", HOST, PORT)

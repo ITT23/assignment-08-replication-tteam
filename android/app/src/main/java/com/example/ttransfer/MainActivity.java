@@ -38,21 +38,20 @@ import com.squareup.picasso.Picasso;
 import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity{
-    private static final int pic_id = 123;
+    private static final int PIC_ID = 123;
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 101;
     private static final String HOST = "192.168.43.236";
     private static final String PORT = "7800";
-    // private static final int PORT = 7800;
     private static final int HTTP_PORT = 8857;
-    private static final String button_start_home = "Take Screenshot";
-    private static final String button_start_return = "Return";
-    ConstraintLayout layout;
-    Drawable background;
-    TextView textview;
-    Button button_start;
-    Button button_save;
+    private static final String BUTTON_START_HOME = "Take Screenshot";
+    private static final String BUTTON_START_RETURN = "Return";
+    private ConstraintLayout layout;
+    private Drawable background;
+    private TextView textview;
+    private Button button_start;
+    private Button button_save;
     private Sender sender;
-    ImageView imageView;
+    private ImageView imageView;
     private Handler handler = new Handler(Looper.getMainLooper());
 
 
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 String button_start_text = button_start.getText().toString();
-                if(button_start_text.compareTo(button_start_home) == 0) {
+                if(button_start_text.compareTo(BUTTON_START_HOME) == 0) {
                     openCameraActivity();
                 }else {
                     return_to_homepage();
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity{
 
     public void openCameraActivity() {
         Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(camera_intent, pic_id);
+        startActivityForResult(camera_intent, PIC_ID);
     }
 
     public void saveImageToGallery() {
@@ -158,7 +157,7 @@ public class MainActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap photo;
         String bitmap_to_string;
-        if (requestCode == pic_id) {
+        if (requestCode == PIC_ID) {
             photo = (Bitmap) data.getExtras().get("data");
             bitmap_to_string = bitmapToString(photo);
             //Log.i("BitmapString",bitmap_to_string);
@@ -177,19 +176,19 @@ public class MainActivity extends AppCompatActivity{
         textview.setVisibility(View.INVISIBLE);
         background.setAlpha(0);
         button_save.setVisibility(imageView.VISIBLE);
-        button_start.setText(button_start_return);
+        button_start.setText(BUTTON_START_RETURN);
     }
 
     private void return_to_homepage() {
         textview.setVisibility(View.VISIBLE);
         background.setAlpha(255);
         button_save.setVisibility(imageView.INVISIBLE);
-        button_start.setText(button_start_home);
+        button_start.setText(BUTTON_START_HOME);
     }
 
     private String bitmapToString(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 90, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }

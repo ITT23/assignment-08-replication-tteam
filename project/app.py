@@ -2,11 +2,13 @@
 # https://stackoverflow.com/questions/4383571/importing-files-from-different-folder
 # https://janakiev.com/blog/python-shell-commands/
 # https://cloud.tencent.com/developer/article/1831561
+# https://www.codespeedy.com/convert-base64-string-to-image-in-python/
 
 import base64
 import os
 import mss
-from PIL import Image
+import cv2
+from PIL import Image, ImageGrab
 from server.server import Server
 #from screenshot import TakeScreenshot
 
@@ -17,9 +19,8 @@ HTTP_PORT = 8857
 base64_server = Server(HOST, PORT)
 
 def start_server():
-    #base64_server = Receiver(HOST, PORT)
     received_base64_data = base64_server.receive_base64_data()
-    #print("Received Base64 Data:", received_base64_data)
+    # print("Received Base64 Data:", received_base64_data)
     return received_base64_data
 
 def base64_validation(base64_data):
@@ -52,6 +53,13 @@ def take_screenshot():
     # base64_string = screenshot_obj.capture_and_convert()
     # print("Sended Base64 String:", base64_string)
 
+def take_main_image_screenshot():
+    screenshot = ImageGrab.grab()
+    screenshot_folder = "./screenshot_matcher"
+    screenshot_filename = "main.png"
+    file_path = f"{screenshot_folder}/{screenshot_filename}"
+    screenshot.save(file_path)
+
 def start_http_server():
     try:
         cmd_command = f"start python -m http.server {HTTP_PORT}"
@@ -60,9 +68,23 @@ def start_http_server():
     except OSError as error:
         print("cmd error:", error)
 
+def save_received_base64_as_image(received_data):
+    decoded_data = base64.b64decode((received_data))
+    img_folder = "./screenshot_matcher"
+    if not os.path.exists(img_folder):
+        os.makedirs(img_folder)
+    img_filename = "template.png"
+    image_path = os.path.join(img_folder, img_filename)
+    with open(image_path, 'wb') as img_file:
+        img_file.write(decoded_data)
+
 if __name__ == "__main__":
     received_base64_data = start_server()
+    take_main_image_screenshot()
     if base64_validation(received_base64_data):
-        take_screenshot()
+        save_received_base64_as_image(received_base64_data)
+        # TODO: compare screenshot with the image AND get position and size as return
+        take_screenshot()# TODO:take screenshot again with position and size
         start_http_server()
-        # send_message("Hello from Python server!", HOST, PORT)
+
+        

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/host_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="192.168.43.236"
+        android:text="192.168.43.236" />
+
+    <EditText
+        android:id="@+id/port_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="7800"
+        android:inputType="number"
+        android:text="7800" />
+
+    <Button
+        android:id="@+id/button_confirm_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="confirmInput"
+        android:text="Confirm" />
+
+</LinearLayout>

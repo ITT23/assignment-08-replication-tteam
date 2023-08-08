@@ -5,8 +5,10 @@ package com.example.ttransfer;
 // http://androidapplicationdeveloper.weebly.com/android-tutorial/how-to-convert-bitmap-to-string-and-string-to-bitmap
 // https://stackoverflow.com/questions/9224056/android-bitmap-to-base64-string
 // https://square.github.io/picasso/
+// Drawable Background Image: https://giphy.com/gifs/nadrient-90s-80s-computer-l41lMAzNZfYAiyR0s
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -26,11 +28,12 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
+
 
 import android.os.Handler;
 
@@ -41,6 +44,11 @@ public class MainActivity extends AppCompatActivity{
     private static final String PORT = "7800";
     // private static final int PORT = 7800;
     private static final int HTTP_PORT = 8857;
+    private static final String button_start_home = "Take Screenshot";
+    private static final String button_start_return = "Return";
+    ConstraintLayout layout;
+    Drawable background;
+    TextView textview;
     Button button_start;
     Button button_save;
     private Sender sender;
@@ -53,13 +61,24 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sender = new Sender();
-        // receiver = new Receiver(this);
+        layout = (ConstraintLayout) findViewById(R.id.layout);
+        background = layout.getBackground();
         imageView = (ImageView) findViewById(R.id.imageView_camera);
+        textview = (TextView) findViewById(R.id.textView);
         button_start = (Button) findViewById(R.id.button_start);
         button_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openCameraActivity();
+                String button_start_text = button_start.getText().toString();
+                if(button_start_text.compareTo(button_start_home) == 0) {
+                    openCameraActivity();
+                }else {
+                    return_to_homepage();
+                    //TODO: the problem: after get back to homepage, it's not possible
+                    //to send the "message" again, this also happens when save button clicked
+                    //IDEE: after these actions just reopen the app?
+                }
+
             }
         });
         button_save = (Button) findViewById(R.id.button_save);
@@ -144,16 +163,28 @@ public class MainActivity extends AppCompatActivity{
             bitmap_to_string = bitmapToString(photo);
             //Log.i("BitmapString",bitmap_to_string);
             sender.execute(bitmap_to_string, HOST, PORT);
-            //TODO: download screenshot and show it in ImageView
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     getImageFromHTTP();
-                    //imageView.setImageBitmap(photo);
-                    button_save.setVisibility(imageView.VISIBLE);
+                    hide_homepage();
                 }
-            }, 1500);
+            }, 300);
         }
+    }
+
+    private void hide_homepage() {
+        textview.setVisibility(View.INVISIBLE);
+        background.setAlpha(0);
+        button_save.setVisibility(imageView.VISIBLE);
+        button_start.setText(button_start_return);
+    }
+
+    private void return_to_homepage() {
+        textview.setVisibility(View.VISIBLE);
+        background.setAlpha(255);
+        button_save.setVisibility(imageView.INVISIBLE);
+        button_start.setText(button_start_home);
     }
 
     private String bitmapToString(Bitmap bitmap) {
@@ -166,15 +197,5 @@ public class MainActivity extends AppCompatActivity{
     private void getImageFromHTTP() {
         String http = "http://"+ HOST + ":" + HTTP_PORT + "/screenshot/screenshot.png";
         Picasso.get().load(http).into(imageView);
-    /*    Glide.with(this)
-                .asBitmap()
-                .load(http)
-                .into(imageView);
-*/
-        /* open http test
-        Uri uri = Uri.parse(http);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
-*/
     }
 }

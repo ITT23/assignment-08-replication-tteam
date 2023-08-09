@@ -5,7 +5,7 @@ package com.example.ttransfer;
 // http://androidapplicationdeveloper.weebly.com/android-tutorial/how-to-convert-bitmap-to-string-and-string-to-bitmap
 // https://stackoverflow.com/questions/9224056/android-bitmap-to-base64-string
 // https://square.github.io/picasso/
-// Drawable Background Image: https://giphy.com/gifs/nadrient-90s-80s-computer-l41lMAzNZfYAiyR0s
+// Drawable Background Image & Icon: https://giphy.com/gifs/nadrient-90s-80s-computer-l41lMAzNZfYAiyR0s
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,10 +13,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -25,9 +28,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,7 +53,6 @@ public class MainActivity extends AppCompatActivity{
     private static final int HTTP_PORT = 8857;
     private String host = "192.168.43.236";
     private String port = "7800";
-    private ConstraintLayout layout;
     private Drawable background;
     private TextView textview;
     private Button button_connect;
@@ -58,8 +60,7 @@ public class MainActivity extends AppCompatActivity{
     private Button button_save;
     private Sender sender;
     private ImageView imageView;
-    private Handler handler = new Handler(Looper.getMainLooper());
-    private SharedPreferences sharedPreferences;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
 
     @Override
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity{
         // init
         setContentView(R.layout.activity_main);
         sender = new Sender();
-        layout = (ConstraintLayout) findViewById(R.id.layout);
+        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.layout);
         background = layout.getBackground();
         imageView = (ImageView) findViewById(R.id.imageView_camera);
         textview = (TextView) findViewById(R.id.textView);
@@ -82,38 +83,41 @@ public class MainActivity extends AppCompatActivity{
         }
 
         // buttons onclickListener
-        button_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String button_start_text = button_start.getText().toString();
-                if(button_start_text.compareTo(BUTTON_START_HOME) == 0) {
-                    openCameraActivity();
-                }else {
-                    return_to_homepage();
-                    //TODO: the problem: after get back to homepage, it's not possible
-                    //to send the "message" again, this also happens when save button clicked
-                    //IDEE: after these actions just reopen the app?
-                }
+        button_start.setOnClickListener(view -> {
+            String button_start_text = button_start.getText().toString();
+            if(button_start_text.compareTo(BUTTON_START_HOME) == 0) {
+                openCameraActivity();
+            }else {
+                scheduleAppRestart(view.getContext());
+            }
+        });
+        button_save.setVisibility(View.INVISIBLE);
+        button_save.setOnClickListener(view -> {
+            saveImageToGallery();
+            scheduleAppRestart(view.getContext());
+        });
+        button_connect.setOnClickListener(view -> {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.fragment_container, new Connect_Fragment());
+            transaction.commit();
+            button_connect.setVisibility(ImageView.INVISIBLE);
+            button_start.setVisibility(ImageView.INVISIBLE);
+        });
+    }
 
-            }
-        });
-        button_save.setVisibility(imageView.INVISIBLE);
-        button_save.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                saveImageToGallery();
-            }
-        });
-        button_connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.add(R.id.fragment_container, new Connect_Fragment());
-                transaction.commit();
-                button_connect.setVisibility(ImageView.INVISIBLE);
-                button_start.setVisibility(ImageView.INVISIBLE);
-            }
-        });
+    // a solution for "go back" to homepage---restart app
+    private void scheduleAppRestart(Context context) {
+        Intent restartIntent = context.getPackageManager()
+                .getLaunchIntentForPackage(context.getPackageName());
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context, 0, restartIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime() + (long) 100, pendingIntent);
+        }
+        finishAffinity();
     }
 
     // start_button click event
@@ -161,7 +165,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    // comfirm event after took phote
+    // confirm event after took photo
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap photo;
@@ -171,32 +175,20 @@ public class MainActivity extends AppCompatActivity{
             bitmap_to_string = bitmapToString(photo);
             //Log.i("BitmapString",bitmap_to_string);
             sender.execute(bitmap_to_string, host, port);
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    getImageFromHTTP();
-                    hide_homepage();
-                }
-            }, 300);
+            handler.postDelayed(() -> {
+                getImageFromHTTP();
+                hide_homepage();
+            }, 200);
         }
     }
 
-    // change "pages" function 1
+    // change "pages" function
     private void hide_homepage() {
         textview.setVisibility(View.INVISIBLE);
         background.setAlpha(0);
-        button_save.setVisibility(imageView.VISIBLE);
+        button_save.setVisibility(View.VISIBLE);
         button_start.setText(BUTTON_START_RETURN);
-        button_connect.setVisibility(imageView.INVISIBLE);
-    }
-
-    // change "pages" function 2
-    private void return_to_homepage() {
-        textview.setVisibility(View.VISIBLE);
-        background.setAlpha(255);
-        button_save.setVisibility(imageView.INVISIBLE);
-        button_start.setText(BUTTON_START_HOME);
-        button_connect.setVisibility(imageView.VISIBLE);
+        button_connect.setVisibility(View.INVISIBLE);
     }
 
     // a function used for saveImageToGallery()
@@ -228,7 +220,7 @@ public class MainActivity extends AppCompatActivity{
         Picasso.get().load(http).into(imageView);
     }
 
-    public void set_button_connect_visisble() {
+    public void set_button_connect_visible() {
         button_connect.setVisibility(ImageView.VISIBLE);
     }
 

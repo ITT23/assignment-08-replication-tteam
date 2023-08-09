@@ -17,7 +17,6 @@ public class Connect_Fragment extends Fragment {
 
     private EditText host;
     private EditText port;
-    private Button button_confirm_connect;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -54,13 +53,8 @@ public class Connect_Fragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {}
         });
-        button_confirm_connect = rootView.findViewById(R.id.button_confirm_connect);
-        button_confirm_connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                confirmInput(view);
-            }
-        });
+        Button button_confirm_connect = rootView.findViewById(R.id.button_confirm_connect);
+        button_confirm_connect.setOnClickListener(this::confirmInput);
         String saved_host = sharedPreferences.getString("host","");
         host.setText(saved_host);
         String saved_port = sharedPreferences.getString("port","");
@@ -87,13 +81,10 @@ public class Connect_Fragment extends Fragment {
         this.host.setTextColor(getResources().getColor(R.color.black));
         this.port.setTextColor(getResources().getColor(R.color.black));
 
-// Save the input or do other operations
-        // ...
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("host", host);
         editor.putString("port", port);
         editor.apply();
-
 
         // Close the fragment
         getParentFragmentManager().beginTransaction().remove(this).commit();
@@ -101,7 +92,7 @@ public class Connect_Fragment extends Fragment {
             MainActivity mainActivity = (MainActivity) getActivity();
             mainActivity.set_host(host);
             mainActivity.set_port(port);
-            mainActivity.set_button_connect_visisble();
+            mainActivity.set_button_connect_visible();
             mainActivity.set_button_start_visible();
         }
     }

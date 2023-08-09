@@ -2,8 +2,6 @@ package com.example.ttransfer;
 // https://www.youtube.com/watch?v=29y4X65ZUwE
 
 import android.os.AsyncTask;
-import android.view.View;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,7 +10,6 @@ import java.net.Socket;
 public class Sender extends AsyncTask<String, Void, Void> {
 
     Socket s;
-    DataOutputStream data;
     PrintWriter pw;
 
     @Override

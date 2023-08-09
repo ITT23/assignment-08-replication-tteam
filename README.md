@@ -2,7 +2,7 @@
 
 # ScreenshotMatcher
 
-![Ttransfer Logo](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/android/app/src/main/res/mipmap-hdpi/frame_01.png)
+![Ttransfer Logo](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/android/app/src/main/res/mipmap-hdpi/frame_01.png ==300x300)
 
 This project is inspired by the work of Schmid, A., Fischer, T., Weichart, A., Hartmann, A., & Wimmer, R. (2021), focusing on creating an application that allows smartphones to capture screenshots of computer screens. Currently, the application is in its preliminary stage and requires further work in terms of refactoring, bug fixing, and more. For screenshot matching, I'm utilizing the template matching method from OpenCV. More details about the method can be found in the [OpenCV documentation](https://docs.opencv.org/3.4/d4/dc6/tutorial_py_template_matching.html).
 
@@ -22,11 +22,11 @@ Please note that this project is a work in progress, and contributions are welco
 
 ### App Preview
 **Start page**
-![Start page](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/start.jpg)
+![Start page](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/start.jpg ==432x736)
 **Configure Host and Port**
-![Configure Host and Port](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/connect.jpg)
+![Configure Host and Port](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/connect.jpg ==432x736)
 **Screenshot match result**
-![Screenshot match result](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/result.jpg)
+![Screenshot match result](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/result.jpg ==432x736)
 
 **Sources for Mobile Icon and Startup Page Background:**
 - [Icon & Background Source](https://giphy.com/gifs/nadrient-90s-80s-computer-l41lMAzNZfYAiyR0s)

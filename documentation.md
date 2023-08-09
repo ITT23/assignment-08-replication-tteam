@@ -18,7 +18,7 @@ For image matching, I directly utilized OpenCV's **[Template Matching](https://d
 3. Improving the accuracy of the matching process remains a future goal.
 
 ### Application Scenarios
-A video of [ttransfer](https://forms.gle/YG83odRKshgUWXqi9) is provided to demonstrate the potential application scenarios. 
+A video of [ttransfer](https://drive.google.com/file/d/1pjwZO0OaQGcpBijrFaq521jGzx7QP30P/view?usp=drivesdk) is provided to demonstrate the potential application scenarios. 
 
 ### Reference
 [1] Gugenheimer, J., Dobbelstein, D., Winkler, C., Haas, G., & Rukzio, E. (2016, October). Facetouch: Enabling touch interaction in display fixed uis for mobile virtual reality. In Proceedings of the 29th Annual Symposium on User Interface Software and Technology (pp. 49-60).

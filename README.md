@@ -21,8 +21,11 @@ The crucial part is to keep the port consistent between the mobile app and the c
 Please note that this project is a work in progress, and contributions are welcome.
 
 ### App Preview
+**Start page**
 ![Start page](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/start.jpg)
+**Configure Host and Port**
 ![Configure Host and Port](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/connect.jpg)
+**Screenshot match result**
 ![Screenshot match result](https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/result.jpg)
 
 **Sources for Mobile Icon and Startup Page Background:**

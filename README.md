@@ -21,13 +21,13 @@ The crucial part is to keep the port consistent between the mobile app and the c
 Please note that this project is a work in progress, and contributions are welcome.
 
 ### App Preview
-**Start page**
+- Start page
 <img src="https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/start.jpg" alt="Start page" width="432" height="736">
 
-**Configure Host and Port**
+- Configure Host and Port
 <img src="https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/connect.jpg" alt="Configure Host and Port" width="432" height="736">
 
-**Screenshot match result**
+- Screenshot match result
 <img src="https://github.com/ITT23/assignment-08-replication-tteam/blob/master/readme%20photo/result.jpg" alt="Screenshot match result" width="432" height="736">
 
 **Sources for Mobile Icon and Startup Page Background:**

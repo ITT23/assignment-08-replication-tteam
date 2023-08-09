@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ttransfer</string>
+    <string name="button_connect">Connect</string>
+    <string name="button_save">Save</string>
+    <string name="button_start">Take Screenshot</string>
+    <string name="textview_start">Click button to take a photo of the computer screen</string>
+    <string name="image_view_start_content_description">background image of the start page. from: https://giphy.com/gifs/nadrient-90s-80s-computer-l41lMAzNZfYAiyR0s</string>
 </resources>

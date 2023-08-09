@@ -10,6 +10,7 @@ import mss
 import cv2
 from PIL import Image, ImageGrab
 from server.server import Server
+import match_screenshot
 #from screenshot import TakeScreenshot
 
 
@@ -30,11 +31,13 @@ def base64_validation(base64_data):
     except base64_data.binascii.Error:
         return False
 
-def take_screenshot():
+def take_screenshot(left_pos, top_pos, width, height):
+    '''
     left_pos = 100
     top_pos = 200
     width = 300
     height = 400
+    '''
     folder_name = "screenshot"
     file_name = "screenshot.png"
 
@@ -83,8 +86,7 @@ if __name__ == "__main__":
     take_main_image_screenshot()
     if base64_validation(received_base64_data):
         save_received_base64_as_image(received_base64_data)
-        # TODO: compare screenshot with the image AND get position and size as return
-        take_screenshot()# TODO:take screenshot again with position and size
+        left_pos, top_pos, width, height = match_screenshot.match_screenshot()
+        take_screenshot(left_pos, top_pos, width, height)
         start_http_server()
 
-        

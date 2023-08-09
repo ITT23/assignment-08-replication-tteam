@@ -7,11 +7,9 @@
 import base64
 import os
 import mss
-import cv2
 from PIL import Image, ImageGrab
 from server.server import Server
 import match_screenshot
-#from screenshot import TakeScreenshot
 
 
 HOST = '192.168.43.236'  # Replace with the desired host
@@ -32,12 +30,6 @@ def base64_validation(base64_data):
         return False
 
 def take_screenshot(left_pos, top_pos, width, height):
-    '''
-    left_pos = 100
-    top_pos = 200
-    width = 300
-    height = 400
-    '''
     folder_name = "screenshot"
     file_name = "screenshot.png"
 
@@ -45,7 +37,6 @@ def take_screenshot(left_pos, top_pos, width, height):
         os.makedirs(folder_name)
     file_path = os.path.join(folder_name, file_name)
 
-    #screenshot_obj = TakeScreenshot(left_pos, top_pos, width, height)
     with mss.mss() as sct:
         region = {"left": left_pos, "top": top_pos, "width": width, "height": height}
         screenshot = sct.grab(region)
